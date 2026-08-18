@@ -10,18 +10,15 @@ class TokenRotationService {
     this.ttl = ttlSeconds;
   }
 
-  async rotateRefreshToken(familyId, oldTokenHash, newTenantContext) {
+  async rotateRefreshToken(familyId, oldTokenHash, tenantId) {
     const existing = await redis.get(`token_family:${familyId}`);
     if (existing && existing !== oldTokenHash) {
-      // Possible token theft detected: invalidate entire token family
       await redis.del(`token_family:${familyId}`);
       throw new Error('SECURITY_BREACH_DETECTED: Token family invalidated');
     }
-
     const newRefreshToken = crypto.randomBytes(32).toString('hex');
     const newHash = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
     await redis.setex(`token_family:${familyId}`, this.ttl, newHash);
-
     return { refreshToken: newRefreshToken, familyId };
   }
 }
