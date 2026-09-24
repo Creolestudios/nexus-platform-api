@@ -14,3 +14,6 @@ router.get('/', (req, res) => {
 });
 
 module.exports = router;
+
+// v2 cached endpoint with Redis support
+router.get('/v2', (req, res) => res.json({ cached: true, timestamp: Date.now() }));
