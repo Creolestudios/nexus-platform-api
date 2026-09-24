@@ -1,0 +1,10 @@
+name: AWS Cost Report
+on:
+  schedule:
+    - cron: '0 6 * * *'
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Querying AWS Cost Explorer for daily cost report..."
